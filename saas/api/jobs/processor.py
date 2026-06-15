@@ -5,6 +5,7 @@ import tempfile
 import zipfile
 from pathlib import Path
 
+from api.config import settings
 from api.jobs.queue import cleanup_expired, get_queue, update_job
 from api.models import JobStatus
 from api.security.tokens import generate_token
