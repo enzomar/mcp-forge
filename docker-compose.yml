@@ -1,24 +1,4 @@
 services:
-  # Nginx reverse proxy: serves frontend static files, proxies API to app
-  # This is the public-facing service that Coolify should route traffic to.
-  nginx:
-    build:
-      context: ./saas
-      dockerfile: Dockerfile.nginx
-    ports:
-      - "80:80"
-    depends_on:
-      app:
-        condition: service_healthy
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/"]
-      interval: 15s
-      timeout: 5s
-      start_period: 10s
-      retries: 3
-
-  # FastAPI backend (API only — no static files)
   app:
     build:
       context: .

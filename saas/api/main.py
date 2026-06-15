@@ -7,6 +7,7 @@ from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
@@ -59,4 +60,12 @@ app.add_middleware(
 app.include_router(generate.router, prefix="/api")
 app.include_router(status.router, prefix="/api")
 app.include_router(download.router)  # /download/{token} at root
+
+# Serve frontend
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+
+
+@app.get("/")
+async def serve_index() -> FileResponse:
+    return FileResponse(FRONTEND_DIR / "index.html", media_type="text/html")
 
