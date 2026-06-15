@@ -1,0 +1,2 @@
+[console_scripts]
+mcp-forge = mcp_forge_generator.cli:main

@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp-forge-generator"
+version = "0.1.0"
+description = "Production-grade OpenAPI/Swagger to FastMCP server generator"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "MCP Forge" }]
+dependencies = [
+  "pydantic>=2.8.0",
+  "pydantic-settings>=2.3.0",
+  "pyyaml>=6.0.1",
+  "jinja2>=3.1.4",
+  "typing-extensions>=4.12.2"
+]
+
+[project.optional-dependencies]
+dev = [
+  "black>=24.8.0",
+  "ruff>=0.6.8",
+  "mypy>=1.11.2",
+  "pytest>=8.3.2"
+]
+
+[project.scripts]
+mcp-forge = "mcp_forge_generator.cli:main"
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+exclude = ["tests/data"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

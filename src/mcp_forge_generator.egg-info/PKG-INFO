@@ -1,0 +1,64 @@
+Metadata-Version: 2.1
+Name: mcp-forge-generator
+Version: 0.1.0
+Summary: Production-grade OpenAPI/Swagger to FastMCP server generator
+Author: MCP Forge
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: pydantic>=2.8.0
+Requires-Dist: pydantic-settings>=2.3.0
+Requires-Dist: pyyaml>=6.0.1
+Requires-Dist: jinja2>=3.1.4
+Requires-Dist: typing-extensions>=4.12.2
+Provides-Extra: dev
+Requires-Dist: black>=24.8.0; extra == "dev"
+Requires-Dist: ruff>=0.6.8; extra == "dev"
+Requires-Dist: mypy>=1.11.2; extra == "dev"
+Requires-Dist: pytest>=8.3.2; extra == "dev"
+
+# MCP Forge Generator
+
+MCP Forge Generator creates a production-ready FastMCP server from OpenAPI 3.x or Swagger specs (YAML or JSON).
+
+## Features
+
+- One async MCP tool per OpenAPI operation
+- FastMCP transports: STDIO, SSE, Streamable HTTP
+- Pydantic request/response models
+- Auth injection (Bearer, API key, Basic, OAuth2)
+- Smart resource-aware caching with invalidation and dependency graph
+- Rate limiting (token bucket)
+- Retry policies with jittered exponential backoff
+- Structured JSON logging
+- OpenTelemetry hooks
+- Docker + docker-compose output
+- Quality tooling in generated output (Ruff, Black, Mypy, Pytest)
+
+## Installation
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .[dev]
+```
+
+## Usage
+
+```bash
+mcp-forge --input petstore.yaml --output generated_server
+```
+
+Or:
+
+```bash
+python -m mcp_forge_generator.cli --input petstore.json --output generated_server
+```
+
+## Validate Generator
+
+```bash
+ruff check .
+black --check .
+mypy src
+pytest
+```
