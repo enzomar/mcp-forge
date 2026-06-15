@@ -27,8 +27,8 @@ services:
   # Nginx reverse proxy: serves frontend static files, proxies API to app
   nginx:
     image: nginx:alpine
-    ports:
-      - "${PORT:-80}:80"
+    expose:
+      - "80"
     volumes:
       - ./saas/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./saas/frontend:/usr/share/nginx/html:ro
