@@ -10,7 +10,7 @@ RUN uv pip install --system --no-cache -r requirements.txt
 
 # Install mcp-forge-generator from repo src/
 COPY src/ ./mcp_forge_generator_src/
-RUN uv pip install --system --no-cache ./mcp_forge_generator_src
+RUN uv pip install --system --no-cache setuptools wheel ./mcp_forge_generator_src
 
 # Copy SaaS application code
 COPY saas/ .
