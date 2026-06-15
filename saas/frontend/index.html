@@ -3,115 +3,214 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MCP Forge — OpenAPI → MCP Server</title>
+  <title>MCP Forge - OpenAPI to MCP Server</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:          #09090e;
-      --surface:     #111118;
-      --card:        #18181f;
-      --border:      #27272f;
-      --border-hov:  #3f3f50;
-      --primary:     #6366f1;
+      --bg: #09090e;
+      --surface: #111118;
+      --card: #18181f;
+      --border: #27272f;
+      --border-hov: #3f3f50;
+      --primary: #6366f1;
       --primary-hov: #4f46e5;
       --primary-dim: rgba(99,102,241,.15);
-      --text:        #f1f5f9;
-      --muted:       #64748b;
-      --subtle:      #94a3b8;
-      --success:     #10b981;
-      --error:       #ef4444;
-      --radius:      12px;
-      --shadow:      0 0 0 1px var(--border), 0 8px 32px rgba(0,0,0,.4);
+      --text: #f1f5f9;
+      --muted: #64748b;
+      --subtle: #94a3b8;
+      --success: #10b981;
+      --error: #ef4444;
+      --radius: 12px;
+      --shadow: 0 0 0 1px var(--border), 0 8px 32px rgba(0,0,0,.4);
     }
     html { height: 100%; }
     body {
-      min-height: 100%; background: var(--bg); color: var(--text);
-      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-      font-size: 15px; line-height: 1.6;
-      display: flex; flex-direction: column; align-items: center;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       padding: 40px 16px 80px;
     }
-    .page { width: 100%; max-width: 520px; display: flex; flex-direction: column; gap: 24px; }
+    .page { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 24px; }
 
-    /* Header */
     header { text-align: center; }
-    .logo { display: inline-flex; align-items: center; gap: 10px;
-      font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-    .logo-icon { width: 36px; height: 36px; border-radius: 10px;
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       background: linear-gradient(135deg, var(--primary), #8b5cf6);
-      display: flex; align-items: center; justify-content: center; font-size: 18px; }
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
     header p { color: var(--muted); font-size: 14px; }
 
-    /* Card */
-    .card { background: var(--card); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
 
-    /* Tabs */
-    .tabs { display: flex; gap: 2px; background: var(--surface); border-radius: 8px;
-      padding: 3px; margin-bottom: 20px; }
-    .tab { flex: 1; text-align: center; padding: 7px 12px; border-radius: 6px;
-      font-size: 13px; font-weight: 500; cursor: pointer; color: var(--muted);
-      border: none; background: none; transition: all .15s; }
+    .tabs {
+      display: flex;
+      gap: 2px;
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 3px;
+      margin-bottom: 20px;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 7px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--muted);
+      border: none;
+      background: none;
+      transition: all .15s;
+    }
     .tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.3); }
     .tab:hover:not(.active) { color: var(--subtle); }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* Drop Zone */
-    .drop-zone { border: 2px dashed var(--border); border-radius: 10px;
-      padding: 36px 20px; text-align: center; cursor: pointer; transition: all .2s; position: relative; }
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 36px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+    }
     .drop-zone:hover, .drop-zone.dragging { border-color: var(--primary); background: var(--primary-dim); }
-    .drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-zone input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
     .drop-icon { font-size: 32px; margin-bottom: 10px; display: block; }
     .drop-zone p { color: var(--muted); font-size: 14px; }
     .drop-zone p strong { color: var(--primary); }
     .drop-zone .file-types { font-size: 12px; color: var(--muted); margin-top: 4px; }
-    .file-selected { margin-top: 10px; display: none; align-items: center; gap: 8px;
-      background: var(--primary-dim); border: 1px solid var(--primary); border-radius: 8px;
-      padding: 8px 12px; font-size: 13px; }
+    .file-selected {
+      margin-top: 10px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary-dim);
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
     .file-selected.show { display: flex; }
     .file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .file-clear { cursor: pointer; color: var(--muted); font-size: 18px; border: none; background: none; padding: 0; }
     .file-clear:hover { color: var(--error); }
 
-    /* URL */
-    .url-hint { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+    .hint { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
 
-    /* Inputs */
     label { display: block; font-size: 13px; font-weight: 500; color: var(--subtle); margin-bottom: 6px; }
-    input[type=text], input[type=url] { width: 100%; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 14px;
-      outline: none; transition: border-color .15s; }
-    input:focus { border-color: var(--primary); }
-    input::placeholder { color: var(--muted); }
-    .field { margin-bottom: 18px; }
+    input[type=url], textarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input:focus, textarea:focus { border-color: var(--primary); }
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+    textarea {
+      min-height: 220px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      line-height: 1.45;
+    }
 
-    /* Button */
-    .btn { width: 100%; padding: 12px 20px; border: none; border-radius: 9px;
-      font-size: 15px; font-weight: 600; cursor: pointer; transition: all .15s;
-      display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn {
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover:not(:disabled) { background: var(--primary-hov); transform: translateY(-1px); }
     .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-    .btn-ghost { background: none; border: 1px solid var(--border); border-radius: 8px;
-      color: var(--subtle); padding: 8px 16px; font-size: 13px; cursor: pointer; transition: all .15s; }
+    .btn-ghost {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--subtle);
+      padding: 8px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .15s;
+    }
     .btn-ghost:hover { border-color: var(--border-hov); color: var(--text); }
 
-    /* Progress */
     #progress-card { display: none; }
     #progress-card.show { display: block; }
     .progress-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
     .progress-header h3 { font-size: 16px; color: var(--text); }
     .progress-pct { font-size: 13px; color: var(--primary); font-weight: 600; }
     .progress-track { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 20px; }
-    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), #8b5cf6);
-      border-radius: 99px; width: 0%; transition: width .5s cubic-bezier(.4,0,.2,1); }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), #8b5cf6);
+      border-radius: 99px;
+      width: 0%;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
     .progress-bar.pulse { animation: pulse-bar 1.2s ease-in-out infinite; }
     @keyframes pulse-bar { 0%,100% { opacity:1; } 50% { opacity:.6; } }
 
     .steps { display: flex; flex-direction: column; gap: 10px; }
-    .step { display: flex; align-items: center; gap: 12px; padding: 11px 14px;
-      border-radius: 8px; border: 1px solid var(--border); background: var(--surface); transition: all .3s; }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: all .3s;
+    }
     .step.active { border-color: var(--primary); background: var(--primary-dim); }
     .step.done { border-color: rgba(16,185,129,.4); opacity: .75; }
     .step.error-step { border-color: var(--error); background: rgba(239,68,68,.08); }
@@ -119,26 +218,55 @@
     .step-body { flex: 1; }
     .step-label { font-size: 13px; font-weight: 500; color: var(--text); }
     .step-detail { font-size: 12px; color: var(--muted); margin-top: 1px; }
-    .spin { width: 16px; height: 16px; border: 2px solid var(--border);
-      border-top-color: var(--primary); border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; }
+    .spin {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Done */
-    .done-banner { display: none; background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.4);
-      border-radius: 10px; padding: 22px; text-align: center; }
+    .done-banner {
+      display: none;
+      background: rgba(16,185,129,.08);
+      border: 1px solid rgba(16,185,129,.4);
+      border-radius: 10px;
+      padding: 22px;
+      text-align: center;
+      margin-top: 20px;
+    }
     .done-banner.show { display: block; }
     .done-banner h3 { color: var(--success); font-size: 18px; margin-bottom: 6px; }
     .done-banner p { color: var(--subtle); font-size: 13px; margin-bottom: 18px; }
-    .btn-dl { display: inline-flex; align-items: center; gap: 8px;
-      background: var(--success); color: #fff; border: none; border-radius: 8px;
-      padding: 12px 26px; font-size: 15px; font-weight: 600; cursor: pointer;
-      text-decoration: none; transition: all .15s; }
+    .btn-dl {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--success);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 26px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .15s;
+    }
     .btn-dl:hover { background: #059669; transform: translateY(-1px); }
     .expiry-note { margin-top: 10px; font-size: 12px; color: var(--muted); }
 
-    /* Error */
-    .error-banner { display: none; background: rgba(239,68,68,.08); border: 1px solid var(--error);
-      border-radius: 10px; padding: 16px; }
+    .error-banner {
+      display: none;
+      background: rgba(239,68,68,.08);
+      border: 1px solid var(--error);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 20px;
+    }
     .error-banner.show { display: block; }
     .error-banner p { color: var(--error); font-size: 13px; }
     .error-banner .retry { margin-top: 10px; }
@@ -149,17 +277,16 @@
 </head>
 <body>
   <div class="page">
-
     <header>
       <div class="logo"><div class="logo-icon">⚡</div>MCP Forge</div>
-      <p>Upload an OpenAPI spec → get a ready-to-run MCP server instantly</p>
+      <p>Upload, link, or paste an OpenAPI spec and get a ready-to-run MCP server.</p>
     </header>
 
-    <!-- Generator card -->
     <div class="card" id="gen-card">
       <div class="tabs">
         <button class="tab active" data-tab="upload">📁 Upload file</button>
         <button class="tab" data-tab="url">🔗 From URL</button>
+        <button class="tab" data-tab="paste">📝 Paste spec</button>
       </div>
 
       <form id="gen-form">
@@ -167,7 +294,7 @@
           <div class="drop-zone" id="drop-zone">
             <input type="file" id="file-input" accept=".yaml,.yml,.json">
             <span class="drop-icon">📋</span>
-            <p><strong>Click to browse</strong> or drag & drop your spec</p>
+            <p><strong>Click to browse</strong> or drag and drop your spec</p>
             <p class="file-types">YAML · YML · JSON</p>
           </div>
           <div class="file-selected" id="file-selected">
@@ -178,25 +305,26 @@
         </div>
 
         <div class="tab-panel" id="tab-url">
-          <p class="url-hint">Paste a public Swagger/OpenAPI URL</p>
-          <div class="field">
-            <label for="spec-url">Spec URL</label>
-            <input type="url" id="spec-url" placeholder="https://petstore.swagger.io/v2/swagger.json">
-          </div>
+          <p class="hint">Paste a public Swagger/OpenAPI URL</p>
+          <label for="spec-url">Spec URL</label>
+          <input type="url" id="spec-url" placeholder="https://petstore.swagger.io/v2/swagger.json">
+        </div>
+
+        <div class="tab-panel" id="tab-paste">
+          <p class="hint">Paste YAML or JSON OpenAPI content</p>
+          <label for="spec-text">OpenAPI spec text</label>
+          <textarea id="spec-text" placeholder="openapi: 3.0.0\ninfo:\n  title: My API\n  version: 1.0.0\npaths:\n  /health:\n    get:\n      responses:\n        '200':\n          description: OK"></textarea>
         </div>
 
         <div style="margin-top:20px;">
-          <button type="submit" class="btn btn-primary" id="gen-btn">
-            ⚡ Generate MCP Server
-          </button>
+          <button type="submit" class="btn btn-primary" id="gen-btn">⚡ Generate MCP Server</button>
         </div>
       </form>
     </div>
 
-    <!-- Progress card -->
     <div class="card" id="progress-card">
       <div class="progress-header">
-        <h3>Generating your server…</h3>
+        <h3>Generating your server...</h3>
         <span class="progress-pct" id="progress-pct">0%</span>
       </div>
       <div class="progress-track">
@@ -207,15 +335,15 @@
         <div class="step" id="step-upload">
           <span class="step-icon" id="icon-upload">📤</span>
           <div class="step-body">
-            <div class="step-label">Uploading spec</div>
-            <div class="step-detail">Sending your file to the server</div>
+            <div class="step-label">Submitting spec</div>
+            <div class="step-detail">Sending request to the server</div>
           </div>
         </div>
         <div class="step" id="step-processing">
           <span class="step-icon" id="icon-processing">⚙️</span>
           <div class="step-body">
             <div class="step-label">Generating MCP server</div>
-            <div class="step-detail" id="detail-processing">Waiting…</div>
+            <div class="step-detail" id="detail-processing">Waiting...</div>
           </div>
         </div>
         <div class="step" id="step-packaging">
@@ -227,16 +355,14 @@
         </div>
       </div>
 
-      <!-- Done -->
-      <div class="done-banner" id="done-banner" style="margin-top:20px;">
+      <div class="done-banner" id="done-banner">
         <h3>✅ Server ready!</h3>
-        <p id="done-msg">Your MCP server has been generated and packaged.</p>
+        <p>Your MCP server has been generated and packaged.</p>
         <a id="dl-link" href="#" class="btn-dl" download="mcp-server.zip">⬇ Download ZIP</a>
         <p class="expiry-note" id="expiry-note">Link expires in 6 hours</p>
       </div>
 
-      <!-- Error -->
-      <div class="error-banner" id="error-banner" style="margin-top:20px;">
+      <div class="error-banner" id="error-banner">
         <p id="error-msg">Something went wrong.</p>
         <div class="retry">
           <button class="btn-ghost" id="retry-btn">← Try again</button>
@@ -245,666 +371,188 @@
     </div>
 
     <footer>
-      Powered by <a href="https://gofastmcp.com" target="_blank" rel="noopener">FastMCP</a> &amp;
+      Powered by <a href="https://gofastmcp.com" target="_blank" rel="noopener">FastMCP</a> and
       <a href="https://github.com/your-org/mcp-forge-generator" target="_blank" rel="noopener">MCP Forge Generator</a>
     </footer>
   </div>
 
   <script>
-    let activeTab = 'upload';
+    let activeTab = "upload";
     let selectedFile = null;
     let pollingTimer = null;
     let jobId = null;
+    let lastStatus = null;
 
-    // Progress map: status → percent
     const PROGRESS = { pending: 5, processing: 35, packaging: 70, done: 100, failed: 100 };
 
-    // Tabs
-    document.querySelectorAll('.tab').forEach(btn => {
-      btn.addEventListener('click', () => {
+    document.querySelectorAll(".tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
         activeTab = btn.dataset.tab;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('tab-' + activeTab).classList.add('active');
+        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("tab-" + activeTab).classList.add("active");
       });
     });
 
-    // Drag & drop
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragging'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragging'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault(); dropZone.classList.remove('dragging');
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("file-input");
+    dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("dragging"); });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragging"));
+    dropZone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropZone.classList.remove("dragging");
       if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
     });
-    fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
-    function setFile(f) {
-      selectedFile = f;
-      document.getElementById('file-name-label').textContent = f.name;
-      document.getElementById('file-selected').classList.add('show');
-    }
-    document.getElementById('file-clear').addEventListener('click', () => {
-      selectedFile = null; fileInput.value = '';
-      document.getElementById('file-selected').classList.remove('show');
-    });
-
-    // Submit
-    document.getElementById('gen-form').addEventListener('submit', async e => {
-      e.preventDefault();
-      if (activeTab === 'upload' && !selectedFile) { alert('Please select or drop an OpenAPI file.'); return; }
-      if (activeTab === 'url' && !document.getElementById('spec-url').value.trim()) {
-        alert('Please enter a Swagger/OpenAPI URL.'); return;
-      }
-      const btn = document.getElementById('gen-btn');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spin"></span> Submitting…';
-
-      try {
-        const fd = new FormData();
-        if (activeTab === 'upload') fd.append('spec_file', selectedFile);
-        else fd.append('spec_url', document.getElementById('spec-url').value.trim());
-
-        const res = await fetch('/api/generate', { method: 'POST', body: fd });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Request failed');
-
-        jobId = data.job_id;
-        showProgressCard();
-        setStep('upload', 'done');
-        setStep('processing', 'active');
-        setProgress(PROGRESS.pending);
-        startPolling();
-      } catch (err) {
-        btn.disabled = false;
-        btn.innerHTML = '⚡ Generate MCP Server';
-        alert(err.message);
-      }
-    });
-
-    // Progress card
-    function showProgressCard() {
-      document.getElementById('gen-card').style.display = 'none';
-      const pc = document.getElementById('progress-card');
-      pc.classList.add('show');
-      ['upload','processing','packaging'].forEach(s => setStep(s, 'idle'));
-      document.getElementById('done-banner').classList.remove('show');
-      document.getElementById('error-banner').classList.remove('show');
-    }
-
-    function setProgress(pct) {
-      const bar = document.getElementById('progress-bar');
-      document.getElementById('progress-pct').textContent = pct + '%';
-      bar.style.width = pct + '%';
-      if (pct >= 100) bar.classList.remove('pulse');
-    }
-
-    function setStep(name, state) {
-      const el = document.getElementById('step-' + name);
-      const icon = document.getElementById('icon-' + name);
-      el.className = 'step' + (state === 'active' ? ' active' : state === 'done' ? ' done' : state === 'error' ? ' error-step' : '');
-      if (state === 'active') icon.innerHTML = '<span class="spin"></span>';
-      else if (state === 'done') icon.textContent = '✅';
-      else if (state === 'error') icon.textContent = '❌';
-      else icon.textContent = { upload: '📤', processing: '⚙️', packaging: '📦' }[name];
-    }
-
-    // Polling
-    let lastStatus = null;
-    async function pollStatus() {
-      try {
-        const res = await fetch('/api/status/' + jobId);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Status error');
-
-        const s = data.status;
-        setProgress(PROGRESS[s] ?? 0);
-
-        if (s !== lastStatus) {
-          if (s === 'processing') {
-            setStep('upload', 'done'); setStep('processing', 'active');
-          }
-          if (s === 'packaging') {
-            setStep('processing', 'done'); setStep('packaging', 'active');
-          }
-          if (s === 'done') {
-            setStep('packaging', 'done');
-            clearInterval(pollingTimer);
-            document.getElementById('progress-header') && (document.querySelector('.progress-header h3').textContent = 'Done!');
-            const exp = data.expires_at ? new Date(data.expires_at).toLocaleString() : '';
-            if (exp) document.getElementById('expiry-note').textContent = 'Link expires ' + exp;
-            document.getElementById('dl-link').href = data.download_url;
-            document.getElementById('done-banner').classList.add('show');
-          }
-          if (s === 'failed') {
-            const activeStep = lastStatus === 'processing' ? 'processing' : lastStatus === 'packaging' ? 'packaging' : 'upload';
-            setStep(activeStep, 'error');
-            clearInterval(pollingTimer);
-            document.getElementById('error-msg').textContent = data.error || 'Generation failed. Please try again.';
-            document.getElementById('error-banner').classList.add('show');
-          }
-          lastStatus = s;
-        }
-        if (data.progress_message && s === 'processing') {
-          document.getElementById('detail-processing').textContent = data.progress_message;
-        }
-      } catch (err) { console.error('Poll:', err); }
-    }
-
-    function startPolling() {
-      lastStatus = 'pending';
-      pollingTimer = setInterval(pollStatus, 1500);
-    }
-
-    // Retry
-    document.getElementById('retry-btn').addEventListener('click', () => {
-      clearInterval(pollingTimer); jobId = null; lastStatus = null;
-      document.getElementById('progress-card').classList.remove('show');
-      document.getElementById('gen-card').style.display = '';
-      const btn = document.getElementById('gen-btn');
-      btn.disabled = false; btn.innerHTML = '⚡ Generate MCP Server';
-    });
-  </script>
-</body>
-</html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MCP Forge — OpenAPI → MCP Server</title>
-  <style>
-    /* ── Reset & Base ─────────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:          #09090e;
-      --surface:     #111118;
-      --card:        #18181f;
-      --border:      #27272f;
-      --border-hov:  #3f3f50;
-      --primary:     #6366f1;
-      --primary-hov: #4f46e5;
-      --primary-dim: rgba(99,102,241,.15);
-      --text:        #f1f5f9;
-      --muted:       #64748b;
-      --subtle:      #94a3b8;
-      --success:     #10b981;
-      --error:       #ef4444;
-      --warn:        #f59e0b;
-      --radius:      12px;
-      --shadow:      0 0 0 1px var(--border), 0 8px 32px rgba(0,0,0,.4);
-    }
-    html { height: 100%; }
-    body {
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-      font-size: 15px;
-      line-height: 1.6;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 16px 80px;
-    }
-
-    /* ── Layout ───────────────────────────────────────────────────────── */
-    .page { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 24px; }
-
-    /* ── Header ───────────────────────────────────────────────────────── */
-    header { text-align: center; }
-    .logo {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 22px; font-weight: 700; color: var(--text);
-      text-decoration: none; margin-bottom: 6px;
-    }
-    .logo-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: linear-gradient(135deg, var(--primary), #8b5cf6);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-    }
-    header p { color: var(--muted); font-size: 14px; }
-
-    /* ── Card ─────────────────────────────────────────────────────────── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      box-shadow: var(--shadow);
-    }
-
-    /* ── Tabs ─────────────────────────────────────────────────────────── */
-    .tabs { display: flex; gap: 2px; background: var(--surface); border-radius: 8px; padding: 3px; margin-bottom: 20px; }
-    .tab {
-      flex: 1; text-align: center; padding: 7px 12px; border-radius: 6px;
-      font-size: 13px; font-weight: 500; cursor: pointer; color: var(--muted);
-      border: none; background: none; transition: all .15s;
-    }
-    .tab.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.3); }
-    .tab:hover:not(.active) { color: var(--subtle); }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ── Drop Zone ────────────────────────────────────────────────────── */
-    .drop-zone {
-      border: 2px dashed var(--border);
-      border-radius: 10px;
-      padding: 36px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all .2s;
-      position: relative;
-    }
-    .drop-zone:hover, .drop-zone.dragging {
-      border-color: var(--primary);
-      background: var(--primary-dim);
-    }
-    .drop-zone input[type=file] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
-    .drop-icon { font-size: 32px; margin-bottom: 10px; display: block; }
-    .drop-zone p { color: var(--muted); font-size: 14px; }
-    .drop-zone p strong { color: var(--primary); }
-    .drop-zone .file-types { font-size: 12px; color: var(--muted); margin-top: 4px; }
-    .file-selected { margin-top: 10px; display: none; align-items: center; gap: 8px;
-      background: var(--primary-dim); border: 1px solid var(--primary); border-radius: 8px;
-      padding: 8px 12px; font-size: 13px; }
-    .file-selected.show { display: flex; }
-    .file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
-    .file-clear { cursor: pointer; color: var(--muted); font-size: 18px; line-height: 1; border: none; background: none; padding: 0; }
-    .file-clear:hover { color: var(--error); }
-
-    /* ── URL input ─────────────────────────────────────────────────────── */
-    .url-hint { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
-
-    /* ── Form inputs ──────────────────────────────────────────────────── */
-    label { display: block; font-size: 13px; font-weight: 500; color: var(--subtle); margin-bottom: 6px; }
-    input[type=text], input[type=email], input[type=url] {
-      width: 100%; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; padding: 10px 14px; color: var(--text); font-size: 14px;
-      outline: none; transition: border-color .15s;
-    }
-    input:focus { border-color: var(--primary); }
-    input::placeholder { color: var(--muted); }
-    .field { margin-bottom: 18px; }
-
-    /* ── Button ───────────────────────────────────────────────────────── */
-    .btn {
-      width: 100%; padding: 12px 20px; border: none; border-radius: 9px;
-      font-size: 15px; font-weight: 600; cursor: pointer; transition: all .15s;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover:not(:disabled) { background: var(--primary-hov); transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-
-    /* ── Status card ──────────────────────────────────────────────────── */
-    #status-card { display: none; }
-    #status-card.show { display: block; }
-
-    .step-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-    .step {
-      display: flex; align-items: center; gap: 14px;
-      padding: 12px 16px; border-radius: 9px;
-      border: 1px solid var(--border); background: var(--surface);
-      transition: all .3s;
-    }
-    .step.active { border-color: var(--primary); background: var(--primary-dim); }
-    .step.done { border-color: var(--success); opacity: .7; }
-    .step.error { border-color: var(--error); background: rgba(239,68,68,.1); }
-    .step-icon { font-size: 20px; min-width: 28px; text-align: center; }
-    .step-text { flex: 1; }
-    .step-label { font-size: 14px; font-weight: 500; }
-    .step-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-    /* Spinner */
-    .spin {
-      width: 20px; height: 20px; border: 2px solid var(--border);
-      border-top-color: var(--primary); border-radius: 50%;
-      animation: spin .7s linear infinite; display: inline-block;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Success banner ───────────────────────────────────────────────── */
-    .success-banner {
-      background: rgba(16,185,129,.1); border: 1px solid var(--success);
-      border-radius: 10px; padding: 20px; text-align: center; display: none;
-    }
-    .success-banner.show { display: block; }
-    .success-banner h3 { color: var(--success); font-size: 18px; margin-bottom: 6px; }
-    .success-banner p { color: var(--subtle); font-size: 13px; margin-bottom: 16px; }
-    .btn-dl {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--success); color: #fff; border: none; border-radius: 8px;
-      padding: 11px 22px; font-size: 14px; font-weight: 600; cursor: pointer;
-      text-decoration: none; transition: all .15s;
-    }
-    .btn-dl:hover { background: #059669; }
-
-    /* ── Error banner ─────────────────────────────────────────────────── */
-    .error-banner {
-      background: rgba(239,68,68,.1); border: 1px solid var(--error);
-      border-radius: 10px; padding: 16px; display: none;
-    }
-    .error-banner.show { display: block; }
-    .error-banner p { color: var(--error); font-size: 13px; }
-    .error-banner .retry { margin-top: 10px; }
-    .btn-ghost {
-      background: none; border: 1px solid var(--border); border-radius: 8px;
-      color: var(--subtle); padding: 8px 16px; font-size: 13px; cursor: pointer;
-      transition: all .15s;
-    }
-    .btn-ghost:hover { border-color: var(--border-hov); color: var(--text); }
-
-    /* ── Footer ───────────────────────────────────────────────────────── */
-    footer { text-align: center; color: var(--muted); font-size: 12px; }
-    footer a { color: var(--primary); text-decoration: none; }
-  </style>
-</head>
-<body>
-  <div class="page">
-
-    <!-- Header -->
-    <header>
-      <div class="logo">
-        <div class="logo-icon">⚡</div>
-        MCP Forge
-      </div>
-      <p>Upload an OpenAPI spec → get a ready-to-run MCP server in your inbox</p>
-    </header>
-
-    <!-- Generator card -->
-    <div class="card" id="gen-card">
-      <div class="tabs">
-        <button class="tab active" data-tab="upload">📁 Upload file</button>
-        <button class="tab" data-tab="url">🔗 From URL</button>
-      </div>
-
-      <form id="gen-form">
-        <!-- Upload tab -->
-        <div class="tab-panel active" id="tab-upload">
-          <div class="drop-zone" id="drop-zone">
-            <input type="file" id="file-input" accept=".yaml,.yml,.json">
-            <span class="drop-icon">📋</span>
-            <p><strong>Click to browse</strong> or drag & drop your spec</p>
-            <p class="file-types">YAML · YML · JSON</p>
-          </div>
-          <div class="file-selected" id="file-selected">
-            <span>📄</span>
-            <span class="file-name" id="file-name-label"></span>
-            <button type="button" class="file-clear" id="file-clear" title="Remove">✕</button>
-          </div>
-        </div>
-
-        <!-- URL tab -->
-        <div class="tab-panel" id="tab-url">
-          <p class="url-hint">Paste a public Swagger/OpenAPI URL (HTTPS recommended)</p>
-          <div class="field">
-            <label for="spec-url">Spec URL</label>
-            <input type="url" id="spec-url" placeholder="https://petstore.swagger.io/v2/swagger.json">
-          </div>
-        </div>
-
-        <!-- Email -->
-        <div class="field" style="margin-top:20px;">
-          <label for="email">Email address <span style="color:var(--error)">*</span></label>
-          <input type="email" id="email" placeholder="you@example.com" required autocomplete="email">
-        </div>
-
-        <button type="submit" class="btn btn-primary" id="gen-btn">
-          ⚡ Generate MCP Server
-        </button>
-      </form>
-    </div>
-
-    <!-- Status card -->
-    <div class="card" id="status-card">
-      <h3 style="font-size:16px;margin-bottom:18px;color:var(--text);">Generation progress</h3>
-      <ul class="step-list">
-        <li class="step" id="step-upload">
-          <span class="step-icon" id="icon-upload">📤</span>
-          <div class="step-text">
-            <div class="step-label">Uploading spec</div>
-            <div class="step-detail">Sending your file to the server</div>
-          </div>
-        </li>
-        <li class="step" id="step-generate">
-          <span class="step-icon" id="icon-generate">⚙️</span>
-          <div class="step-text">
-            <div class="step-label">Generating MCP server</div>
-            <div class="step-detail" id="detail-generate">Waiting…</div>
-          </div>
-        </li>
-        <li class="step" id="step-package">
-          <span class="step-icon" id="icon-package">📦</span>
-          <div class="step-text">
-            <div class="step-label">Packaging</div>
-            <div class="step-detail">Building the ZIP file</div>
-          </div>
-        </li>
-        <li class="step" id="step-email">
-          <span class="step-icon" id="icon-email">✉️</span>
-          <div class="step-text">
-            <div class="step-label">Sending email</div>
-            <div class="step-detail" id="detail-email">Download link on the way</div>
-          </div>
-        </li>
-      </ul>
-
-      <!-- Success -->
-      <div class="success-banner" id="success-banner" style="margin-top:20px;">
-        <h3>✅ Server ready!</h3>
-        <p id="success-msg">Check your inbox — the download link expires in 12 hours.</p>
-      </div>
-
-      <!-- Error -->
-      <div class="error-banner" id="error-banner" style="margin-top:20px;">
-        <p id="error-msg">Something went wrong.</p>
-        <div class="retry">
-          <button class="btn-ghost" id="retry-btn">← Try again</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-      Powered by <a href="https://gofastmcp.com" target="_blank" rel="noopener">FastMCP</a> &amp;
-      <a href="https://github.com/your-org/mcp-forge-generator" target="_blank" rel="noopener">MCP Forge Generator</a>
-    </footer>
-  </div>
-
-  <script>
-    // ── State ──────────────────────────────────────────────────────────
-    let activeTab = 'upload';
-    let selectedFile = null;
-    let pollingTimer = null;
-    let jobId = null;
-
-    // ── Tab switching ──────────────────────────────────────────────────
-    document.querySelectorAll('.tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        activeTab = btn.dataset.tab;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('tab-' + activeTab).classList.add('active');
-      });
-    });
-
-    // ── Drag & drop ────────────────────────────────────────────────────
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
-
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragging'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragging'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.classList.remove('dragging');
-      const file = e.dataTransfer.files[0];
-      if (file) setFile(file);
-    });
-    fileInput.addEventListener('change', () => {
+    fileInput.addEventListener("change", () => {
       if (fileInput.files[0]) setFile(fileInput.files[0]);
     });
 
     function setFile(file) {
       selectedFile = file;
-      document.getElementById('file-name-label').textContent = file.name;
-      document.getElementById('file-selected').classList.add('show');
+      document.getElementById("file-name-label").textContent = file.name;
+      document.getElementById("file-selected").classList.add("show");
     }
 
-    document.getElementById('file-clear').addEventListener('click', () => {
+    document.getElementById("file-clear").addEventListener("click", () => {
       selectedFile = null;
-      fileInput.value = '';
-      document.getElementById('file-selected').classList.remove('show');
+      fileInput.value = "";
+      document.getElementById("file-selected").classList.remove("show");
     });
 
-    // ── Form submit ────────────────────────────────────────────────────
-    document.getElementById('gen-form').addEventListener('submit', async e => {
+    document.getElementById("gen-form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      if (!email) { alert('Please enter your email address.'); return; }
 
-      if (activeTab === 'upload' && !selectedFile) { alert('Please select or drop an OpenAPI file.'); return; }
-      if (activeTab === 'url' && !document.getElementById('spec-url').value.trim()) {
-        alert('Please enter a Swagger/OpenAPI URL.'); return;
+      const specUrl = document.getElementById("spec-url").value.trim();
+      const specText = document.getElementById("spec-text").value.trim();
+
+      if (activeTab === "upload" && !selectedFile) {
+        alert("Please select or drop an OpenAPI file.");
+        return;
+      }
+      if (activeTab === "url" && !specUrl) {
+        alert("Please enter a Swagger/OpenAPI URL.");
+        return;
+      }
+      if (activeTab === "paste" && !specText) {
+        alert("Please paste your OpenAPI spec text.");
+        return;
       }
 
-      const btn = document.getElementById('gen-btn');
+      const btn = document.getElementById("gen-btn");
       btn.disabled = true;
-      btn.innerHTML = '<span class="spin"></span> Submitting…';
+      btn.innerHTML = '<span class="spin"></span> Submitting...';
 
       try {
         const fd = new FormData();
-        fd.append('email', email);
-        if (activeTab === 'upload') {
-          fd.append('spec_file', selectedFile);
-        } else {
-          fd.append('spec_url', document.getElementById('spec-url').value.trim());
-        }
+        if (activeTab === "upload") fd.append("spec_file", selectedFile);
+        if (activeTab === "url") fd.append("spec_url", specUrl);
+        if (activeTab === "paste") fd.append("spec_text", specText);
 
-        const res = await fetch('/api/generate', { method: 'POST', body: fd });
+        const res = await fetch("/api/generate", { method: "POST", body: fd });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Request failed');
+        if (!res.ok) throw new Error(data.detail || "Request failed");
 
         jobId = data.job_id;
-        showStatusCard();
-        stepDone('upload');
-        stepActive('generate');
+        showProgressCard();
+        setStep("upload", "done");
+        setStep("processing", "active");
+        setProgress(PROGRESS.pending);
         startPolling();
-
       } catch (err) {
         btn.disabled = false;
-        btn.innerHTML = '⚡ Generate MCP Server';
-        showError(err.message);
+        btn.textContent = "⚡ Generate MCP Server";
+        alert(err.message || "Request failed");
       }
     });
 
-    // ── Status card ────────────────────────────────────────────────────
-    function showStatusCard() {
-      document.getElementById('gen-card').style.display = 'none';
-      const sc = document.getElementById('status-card');
-      sc.classList.add('show');
-      // reset steps
-      ['upload','generate','package','email'].forEach(s => {
-        document.getElementById('step-' + s).className = 'step';
-        document.getElementById('icon-' + s).innerHTML = {
-          upload: '📤', generate: '⚙️', package: '📦', email: '✉️'
-        }[s];
-      });
-      document.getElementById('success-banner').classList.remove('show');
-      document.getElementById('error-banner').classList.remove('show');
+    function showProgressCard() {
+      document.getElementById("gen-card").style.display = "none";
+      const card = document.getElementById("progress-card");
+      card.classList.add("show");
+      ["upload", "processing", "packaging"].forEach((name) => setStep(name, "idle"));
+      document.getElementById("done-banner").classList.remove("show");
+      document.getElementById("error-banner").classList.remove("show");
     }
 
-    function stepActive(name) {
-      const el = document.getElementById('step-' + name);
-      el.className = 'step active';
-      document.getElementById('icon-' + name).innerHTML = '<span class="spin"></span>';
-    }
-    function stepDone(name) {
-      const el = document.getElementById('step-' + name);
-      el.className = 'step done';
-      document.getElementById('icon-' + name).textContent = '✅';
-    }
-    function stepError(name) {
-      const el = document.getElementById('step-' + name);
-      el.className = 'step error';
-      document.getElementById('icon-' + name).textContent = '❌';
+    function setProgress(pct) {
+      const bar = document.getElementById("progress-bar");
+      document.getElementById("progress-pct").textContent = pct + "%";
+      bar.style.width = pct + "%";
+      if (pct >= 100) bar.classList.remove("pulse");
     }
 
-    // ── Polling ────────────────────────────────────────────────────────
-    const STATUS_STEP = {
-      pending:    null,
-      processing: 'generate',
-      packaging:  'package',
-      sending:    'email',
-      done:       'email',
-      failed:     null,
-    };
-
-    let lastStatus = null;
+    function setStep(name, state) {
+      const el = document.getElementById("step-" + name);
+      const icon = document.getElementById("icon-" + name);
+      el.className = "step" + (
+        state === "active" ? " active" : state === "done" ? " done" : state === "error" ? " error-step" : ""
+      );
+      if (state === "active") icon.innerHTML = '<span class="spin"></span>';
+      else if (state === "done") icon.textContent = "✅";
+      else if (state === "error") icon.textContent = "❌";
+      else icon.textContent = { upload: "📤", processing: "⚙️", packaging: "📦" }[name];
+    }
 
     async function pollStatus() {
       try {
-        const res = await fetch('/api/status/' + jobId);
+        const res = await fetch("/api/status/" + jobId);
         const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || 'Status check failed');
+        if (!res.ok) throw new Error(data.detail || "Status error");
 
-        const s = data.status;
-        if (data.progress_message) {
-          const step = STATUS_STEP[s];
-          if (step) document.getElementById('detail-' + step.replace('generate','generate').replace('email','email')) && null;
-          // update detail of current step
-          if (s === 'processing') document.getElementById('detail-generate').textContent = data.progress_message;
-          if (s === 'sending') document.getElementById('detail-email').textContent = data.progress_message;
+        const status = data.status;
+        setProgress(PROGRESS[status] ?? 0);
+
+        if (status !== lastStatus) {
+          if (status === "processing") {
+            setStep("upload", "done");
+            setStep("processing", "active");
+          }
+          if (status === "packaging") {
+            setStep("processing", "done");
+            setStep("packaging", "active");
+          }
+          if (status === "done") {
+            setStep("packaging", "done");
+            clearInterval(pollingTimer);
+            document.querySelector(".progress-header h3").textContent = "Done!";
+            const exp = data.expires_at ? new Date(data.expires_at).toLocaleString() : "";
+            if (exp) document.getElementById("expiry-note").textContent = "Link expires " + exp;
+            document.getElementById("dl-link").href = data.download_url;
+            document.getElementById("done-banner").classList.add("show");
+          }
+          if (status === "failed") {
+            const active = lastStatus === "processing" ? "processing" : lastStatus === "packaging" ? "packaging" : "upload";
+            setStep(active, "error");
+            clearInterval(pollingTimer);
+            document.getElementById("error-msg").textContent = data.error || "Generation failed. Please try again.";
+            document.getElementById("error-banner").classList.add("show");
+          }
+          lastStatus = status;
         }
 
-        if (s !== lastStatus) {
-          if (s === 'processing') { stepDone('upload'); stepActive('generate'); }
-          if (s === 'packaging')  { stepDone('generate'); stepActive('package'); }
-          if (s === 'sending')    { stepDone('package'); stepActive('email'); }
-          if (s === 'done') {
-            stepDone('email');
-            clearInterval(pollingTimer);
-            const exp = data.expires_at ? new Date(data.expires_at).toLocaleString() : '12 hours';
-            document.getElementById('success-msg').textContent =
-              `Check your inbox — the download link expires at ${exp}.`;
-            document.getElementById('success-banner').classList.add('show');
-          }
-          if (s === 'failed') {
-            const active = STATUS_STEP[lastStatus] || 'generate';
-            stepError(active);
-            clearInterval(pollingTimer);
-            showError(data.error || 'Generation failed. Please try again.');
-          }
-          lastStatus = s;
+        if (data.progress_message && status === "processing") {
+          document.getElementById("detail-processing").textContent = data.progress_message;
         }
       } catch (err) {
-        console.error('Poll error:', err);
+        console.error("Poll:", err);
       }
     }
 
     function startPolling() {
-      lastStatus = 'pending';
-      pollingTimer = setInterval(pollStatus, 2000);
+      lastStatus = "pending";
+      pollingTimer = setInterval(pollStatus, 1500);
     }
 
-    // ── Error / Retry ──────────────────────────────────────────────────
-    function showError(msg) {
-      document.getElementById('error-msg').textContent = msg;
-      document.getElementById('error-banner').classList.add('show');
-    }
-
-    document.getElementById('retry-btn').addEventListener('click', () => {
+    document.getElementById("retry-btn").addEventListener("click", () => {
       clearInterval(pollingTimer);
-      jobId = null; lastStatus = null;
-      document.getElementById('status-card').classList.remove('show');
-      const gc = document.getElementById('gen-card');
-      gc.style.display = '';
-      const btn = document.getElementById('gen-btn');
+      jobId = null;
+      lastStatus = null;
+      document.getElementById("progress-card").classList.remove("show");
+      document.getElementById("gen-card").style.display = "";
+      const btn = document.getElementById("gen-btn");
       btn.disabled = false;
-      btn.innerHTML = '⚡ Generate MCP Server';
+      btn.textContent = "⚡ Generate MCP Server";
     });
   </script>
 </body>

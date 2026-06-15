@@ -16,16 +16,22 @@ async def generate(
     request: Request,
     spec_file: Optional[UploadFile] = File(default=None),
     spec_url: Optional[str] = Form(default=None),
+    spec_text: Optional[str] = Form(default=None),
 ) -> dict:
-    if not spec_file and not spec_url:
-        raise HTTPException(400, "Provide either spec_file or spec_url")
+    has_file = spec_file is not None
+    has_url = bool(spec_url and spec_url.strip())
+    has_text = bool(spec_text and spec_text.strip())
+
+    if sum([has_file, has_url, has_text]) != 1:
+        raise HTTPException(400, "Provide exactly one input: spec_file, spec_url, or spec_text")
 
     # ── File upload path ──────────────────────────────────────────────────────
-    if spec_file:
+    if has_file:
+        assert spec_file is not None
         # Size guard — read() is needed anyway so check after
         content = await spec_file.read()
         filename = spec_file.filename or "spec.yaml"
-    else:
+    elif has_url:
         # ── URL fetch path ────────────────────────────────────────────────────
         assert spec_url is not None
         url_error = validate_url(spec_url)
@@ -43,6 +49,10 @@ async def generate(
 
         raw_name = spec_url.rstrip("/").rsplit("/", 1)[-1] or "spec"
         filename = raw_name if raw_name.endswith((".yaml", ".yml", ".json")) else raw_name + ".yaml"
+    else:
+        assert spec_text is not None
+        content = spec_text.encode("utf-8")
+        filename = "pasted_spec.yaml"
 
     # ── Validate spec content ─────────────────────────────────────────────────
     content_error = validate_openapi_content(content)
