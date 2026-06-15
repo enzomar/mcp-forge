@@ -31,7 +31,7 @@ saas/
 ├── requirements.txt
 ├── .env.example
 ├── Dockerfile
-└── docker-compose.yml
+└── ../docker-compose.yml  (from repo root)
 ```
 
 ## User Flow
@@ -110,10 +110,10 @@ For transactional email services (Mailgun, Postmark, Resend), use their SMTP rel
 ## Docker
 
 ```bash
-cd saas
-cp .env.example .env
+# From the repo root
+cp saas/.env.example saas/.env
 # edit .env — set SECRET_KEY, BASE_URL, and SMTP credentials
-docker compose up --build
+docker compose -f docker-compose.yml up --build
 ```
 
 ## Environment Variables
