@@ -8,9 +8,10 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 COPY saas/requirements.txt ./
 RUN uv pip install --system --no-cache -r requirements.txt
 
-# Install mcp-forge-generator from repo src/
-COPY src/ ./mcp_forge_generator_src/
-RUN uv pip install --system --no-cache setuptools wheel ./mcp_forge_generator_src
+# Install mcp-forge-generator from repo — copy full package layout so pyproject.toml is present
+COPY pyproject.toml README.md ./generator-build/
+COPY src/ ./generator-build/src/
+RUN uv pip install --system --no-cache ./generator-build
 
 # Copy SaaS application code
 COPY saas/ .
