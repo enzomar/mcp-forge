@@ -7,7 +7,6 @@ from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
@@ -61,5 +60,3 @@ app.include_router(generate.router, prefix="/api")
 app.include_router(status.router, prefix="/api")
 app.include_router(download.router)  # /download/{token} at root
 
-# Serve the SPA last so API routes take priority
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
