@@ -12,8 +12,9 @@ services:
       - TOKEN_EXPIRY_HOURS=${TOKEN_EXPIRY_HOURS:-6}
       - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-10}
       - RATE_LIMIT_GENERATE=${RATE_LIMIT_GENERATE:-5/minute}
-    ports:
-      - "${APP_PORT:-8000}:8000"
+    # No host port binding — Coolify's Traefik proxy handles routing
+    expose:
+      - "8000"
     volumes:
       - mcp_storage:/app/storage
     restart: unless-stopped
