@@ -548,14 +548,21 @@
         if (!res.ok) throw new Error(data.detail || 'Status check failed');
 
         const s = data.status;
-        if (data.progress_message) {
-          if (s === 'processing') document.getElementById('detail-generate').textContent = data.progress_message;
-        }
 
         if (s !== lastStatus) {
-          if (s === 'processing') { stepDone('upload'); stepActive('generate'); }
-          if (s === 'packaging')  { stepDone('generate'); stepActive('package'); }
+          if (s === 'processing') {
+            stepDone('upload');
+            stepActive('generate');
+            document.getElementById('detail-generate').textContent = data.progress_message || 'Generating…';
+          }
+          if (s === 'packaging') {
+            stepDone('upload');
+            stepDone('generate');
+            stepActive('package');
+          }
           if (s === 'done') {
+            stepDone('upload');
+            stepDone('generate');
             stepDone('package');
             clearInterval(pollingTimer);
             document.getElementById('success-msg').textContent = 'Your MCP server has been generated. Click below to download.';
@@ -569,6 +576,8 @@
             showError(data.error || 'Generation failed. Please try again.');
           }
           lastStatus = s;
+        } else if (data.progress_message && s === 'processing') {
+          document.getElementById('detail-generate').textContent = data.progress_message;
         }
       } catch (err) {
         console.error('Poll error:', err);

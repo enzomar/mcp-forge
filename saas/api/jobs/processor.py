@@ -5,7 +5,6 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from api.config import settings
 from api.jobs.queue import cleanup_expired, get_queue, update_job
 from api.models import JobStatus
 from api.security.tokens import generate_token
@@ -41,9 +40,9 @@ async def process_job(job_id: str, spec_content: bytes, filename: str) -> None:
                     if file.is_file() and ".venv" not in file.parts and "__pycache__" not in file.parts:
                         zf.write(file, file.relative_to(output_path))
 
-            # Generate signed download token and expose URL directly
+            # Generate signed download token and expose URL as relative path
             token = generate_token(job_id)
-            download_url = f"{settings.BASE_URL}/download/{token}"
+            download_url = f"/download/{token}"
 
             await update_job(
                 job_id,
