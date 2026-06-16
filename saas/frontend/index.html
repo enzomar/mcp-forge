@@ -202,6 +202,12 @@
     .success-banner.show { display: block; }
     .success-banner h3 { color: var(--success); font-size: 18px; margin-bottom: 6px; }
     .success-banner p { color: var(--subtle); font-size: 13px; margin-bottom: 16px; }
+    .success-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
     .btn-dl {
       display: inline-flex; align-items: center; gap: 8px;
       background: var(--success); color: #fff; border: none; border-radius: 8px;
@@ -326,8 +332,11 @@
       <!-- Success -->
       <div class="success-banner" id="success-banner" style="margin-top:20px;">
         <h3>✅ Server ready!</h3>
-        <p id="success-msg">Your MCP server has been generated.</p>
-        <a class="btn-dl" id="download-link" href="#" download>⬇ Download ZIP</a>
+        <p id="success-msg">Your MCP server has been generated. Download it now or start a new generation.</p>
+        <div class="success-actions">
+          <a class="btn-dl" id="download-link" href="#" download>⬇ Download ZIP</a>
+          <button type="button" class="btn-ghost" id="new-server-btn">+ Create new server</button>
+        </div>
       </div>
 
       <!-- Error -->
@@ -596,15 +605,38 @@
     }
 
     document.getElementById('retry-btn').addEventListener('click', () => {
+      resetToGenerator();
+    });
+
+    document.getElementById('new-server-btn').addEventListener('click', () => {
+      resetToGenerator();
+    });
+
+    function resetToGenerator() {
       clearInterval(pollingTimer);
       jobId = null; lastStatus = null;
       document.getElementById('status-card').classList.remove('show');
       const gc = document.getElementById('gen-card');
       gc.style.display = '';
+
+      // Clear input state so users can immediately start a fresh generation.
+      selectedFile = null;
+      fileInput.value = '';
+      document.getElementById('file-selected').classList.remove('show');
+      document.getElementById('spec-url').value = '';
+      specText.value = '';
+      validateSpec('');
+
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      activeTab = 'upload';
+      document.querySelector('.tab[data-tab="upload"]').classList.add('active');
+      document.getElementById('tab-upload').classList.add('active');
+
       const btn = document.getElementById('gen-btn');
       btn.disabled = false;
       btn.innerHTML = '⚡ Generate MCP Server';
-    });
+    }
   </script>
 </body>
 </html>
